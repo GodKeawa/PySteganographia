@@ -2,6 +2,7 @@ import numpy as np
 from PIL import Image
 from PIL.PngImagePlugin import PngInfo
 
+
 class PNGImage:
     def __init__(self, image_path: str = None):
         self.width = 0
@@ -27,7 +28,7 @@ class PNGImage:
         self.pixels = np.array(img, dtype=np.uint8)
 
         # 不处理调色板模式
-        if img.mode == 'P':
+        if img.mode == "P":
             raise RuntimeError("Palette mode 'P' is not supported in this version.")
 
         # 提取PNG文本块元数据
@@ -40,8 +41,7 @@ class PNGImage:
 
     def _extract_metadata(self, img):
         for key in img.info.keys():
-            if isinstance(key, str):
-                self.metadata[key] = img.info[key]
+            self.metadata[key] = img.info[key]
 
     def get_pixel(self, x: int, y: int) -> np.ndarray:
         if not self._validate_coords(x, y):
@@ -74,15 +74,17 @@ class PNGImage:
 
         # 准备PNG元数据
         pnginfo = PngInfo()
+        save_kwargs = {
+            "format": "PNG",
+            "pnginfo": pnginfo,
+        }
         for key, value in self.metadata.items():
             if isinstance(value, str):
                 pnginfo.add_text(key, value)
-
+            else:
+                save_kwargs[key] = value
         # 保存文件
-        save_kwargs = {
-            'format': 'PNG',
-            'pnginfo': pnginfo,
-        }
+
         img.save(output_path, **save_kwargs)
         print(f"saved: {output_path}")
         print(f"  size: {self.width}x{self.height}")
@@ -91,7 +93,16 @@ class PNGImage:
 
     def _validate_coords(self, x: int, y: int) -> bool:
         return 0 <= x < self.width and 0 <= y < self.height
-
+    
+    def copy(self):
+        new_image = PNGImage()
+        new_image.width = self.width
+        new_image.height = self.height
+        new_image.mode = self.mode
+        new_image.format = self.format
+        new_image.pixels = self.pixels.copy() if self.pixels is not None else None
+        new_image.metadata = self.metadata.copy()
+        return new_image
 
 
 # Example usage

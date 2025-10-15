@@ -8,6 +8,12 @@ class LSBEncoder:
         self.image = PNGImage(image_path)
 
     def encode(self, data: bytes) -> None:
+        capacity = (self.image.width * self.image.height * len(self.image.get_pixel(0, 0))) // 8
+        print(
+            "Available capacity (in bytes): ", capacity
+        )
+        if len(data) * 8 > capacity * 8:
+            raise ValueError("Data is too large to encode in the image.")
         bits : list[bool] = []
         for byte in data:
             for i in range(8):

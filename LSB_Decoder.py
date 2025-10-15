@@ -28,9 +28,7 @@ class LSBDecoder:
         return bytearray(bytes_list)
 
     def parse(self, parse_type : str) -> Any:
-        if parse_type == 'utf-8':
-            return self.bytes.decode('utf-8', errors='ignore')
-        elif parse_type == 'bytes':
+        if parse_type == 'bytes':
             return self.bytes
         else:
             try:
