@@ -4,13 +4,13 @@ from PIL.PngImagePlugin import PngInfo
 
 
 class PNGImage:
-    def __init__(self, image_path: str = None):
+    def __init__(self, image_path=None):
         self.width = 0
         self.height = 0
         self.mode = None
         self.format = None
 
-        self.pixels = None
+        self.pixels = np.array([], dtype=np.uint8)
         self.metadata = {}
 
         if image_path:
@@ -93,7 +93,7 @@ class PNGImage:
 
     def _validate_coords(self, x: int, y: int) -> bool:
         return 0 <= x < self.width and 0 <= y < self.height
-    
+
     def copy(self):
         new_image = PNGImage()
         new_image.width = self.width
